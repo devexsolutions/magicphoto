@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Sparkles, TrendingUp, Users, Zap } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
+import { useLanguage } from '../components/LanguageProvider';
 
 interface ViralTemplate {
   id: string;
@@ -18,6 +19,7 @@ const Home: React.FC = () => {
   const [templates, setTemplates] = useState<ViralTemplate[]>([]);
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuthContext();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchTemplates();
@@ -107,14 +109,13 @@ const Home: React.FC = () => {
           >
             <h1 className="text-5xl md:text-7xl font-bold mb-6">
               <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent">
-                Convierte tu imagen
+                {t('home', 'tagline1')}
               </span>
               <br />
-              <span className="text-white">en una tendencia</span>
+              <span className="text-white">{t('home', 'tagline2')}</span>
             </h1>
             <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Transforma tus fotos en imágenes virales usando IA generativa. 
-              Sin necesidad de saber ingeniería de prompts, solo sube tu imagen y elige una plantilla.
+              {t('home', 'hero_desc')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {isAuthenticated ? (
@@ -122,21 +123,21 @@ const Home: React.FC = () => {
                   to="/generate"
                   className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
                 >
-                  Generar Ahora
+                  {t('home', 'generate_now')}
                 </Link>
               ) : (
                 <Link
                   to="/register"
                   className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
                 >
-                  Comenzar Gratis
+                  {t('home', 'start_free')}
                 </Link>
               )}
               <Link
                 to="#templates"
                 className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all duration-300 backdrop-blur-sm"
               >
-                Ver Plantillas
+                {t('home', 'view_templates')}
               </Link>
             </div>
           </motion.div>
@@ -153,10 +154,10 @@ const Home: React.FC = () => {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-white mb-4">
-              ¿Por qué elegir ViralGenAI?
+              {t('home', 'why_choose')}
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Creamos la mejor experiencia para generar contenido viral
+              {t('home', 'best_exp')}
             </p>
           </motion.div>
 

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Sparkles } from 'lucide-react';
 import { useAuthContext } from '../components/AuthProvider';
 import toast from 'react-hot-toast';
+import { useLanguage } from '../components/LanguageProvider';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -12,6 +13,7 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuthContext();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,15 +46,15 @@ const Login: React.FC = () => {
             </span>
           </div>
           <h2 className="text-3xl font-bold text-white">
-            Inicia sesión en tu cuenta
+            {t('login', 'title')}
           </h2>
           <p className="mt-2 text-gray-400">
-            ¿No tienes una cuenta?{' '}
+            {t('login', 'no_account')} {' '}
             <Link
               to="/register"
               className="text-purple-400 hover:text-purple-300 transition-colors"
             >
-              Regístrate aquí
+              {t('login', 'register_here')}
             </Link>
           </p>
         </div>
@@ -61,7 +63,7 @@ const Login: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
-                Correo electrónico
+                {t('login', 'email')}
               </label>
               <input
                 id="email"
@@ -76,7 +78,7 @@ const Login: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
-                Contraseña
+                {t('login', 'password')}
               </label>
               <div className="relative">
                 <input
@@ -103,18 +105,18 @@ const Login: React.FC = () => {
               disabled={loading}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
             >
-              {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
+              {loading ? t('login', 'submitting') : t('login', 'submit')}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
-              ¿Olvidaste tu contraseña?{' '}
+              {t('login', 'forgot')} {' '}
               <Link
                 to="/reset-password"
                 className="text-purple-400 hover:text-purple-300 transition-colors"
               >
-                Recuperar contraseña
+                {t('login', 'recover')}
               </Link>
             </p>
           </div>

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Sparkles } from 'lucide-react';
 import { useAuthContext } from '../components/AuthProvider';
 import toast from 'react-hot-toast';
+import { useLanguage } from '../components/LanguageProvider';
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuthContext();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,15 +47,15 @@ const Register: React.FC = () => {
             </span>
           </div>
           <h2 className="text-3xl font-bold text-white">
-            Crea tu cuenta
+            {t('register', 'title')}
           </h2>
           <p className="mt-2 text-gray-400">
-            ¿Ya tienes una cuenta?{' '}
+            {t('register', 'have_account')} {' '}
             <Link
               to="/login"
               className="text-purple-400 hover:text-purple-300 transition-colors"
             >
-              Inicia sesión aquí
+              {t('register', 'login_here')}
             </Link>
           </p>
         </div>
@@ -62,7 +64,7 @@ const Register: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-white mb-2">
-                Nombre completo
+                {t('register', 'full_name')}
               </label>
               <input
                 id="fullName"
@@ -77,7 +79,7 @@ const Register: React.FC = () => {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
-                Correo electrónico
+                {t('register', 'email')}
               </label>
               <input
                 id="email"
@@ -92,7 +94,7 @@ const Register: React.FC = () => {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
-                Contraseña
+                {t('register', 'password')}
               </label>
               <div className="relative">
                 <input
@@ -103,7 +105,7 @@ const Register: React.FC = () => {
                   required
                   minLength={6}
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 pr-12"
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder={t('register', 'placeholder_password')}
                 />
                 <button
                   type="button"
@@ -120,7 +122,7 @@ const Register: React.FC = () => {
               disabled={loading}
               className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
             >
-              {loading ? 'Creando cuenta...' : 'Crear cuenta'}
+              {loading ? t('register', 'submitting') : t('register', 'submit')}
             </button>
           </form>
 
