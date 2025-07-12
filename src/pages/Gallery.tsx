@@ -5,6 +5,7 @@ import ReactCompareImage from 'react-compare-image';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
 import toast from 'react-hot-toast';
+import { useLanguage } from '../components/LanguageProvider';
 
 interface GeneratedImage {
   id: string;
@@ -22,6 +23,7 @@ const Gallery: React.FC = () => {
   const [images, setImages] = useState<GeneratedImage[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuthContext();
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (user) {
@@ -63,7 +65,7 @@ const Gallery: React.FC = () => {
   };
 
   const handleDelete = async (imageId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar esta imagen?')) {
+    if (!window.confirm(t('gallery', 'delete_confirm'))) {
       return;
     }
 
@@ -88,7 +90,7 @@ const Gallery: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-400 mx-auto mb-4"></div>
-          <p className="text-white text-xl">Cargando tu galería...</p>
+          <p className="text-white text-xl">{t('gallery', 'loading')}</p>
         </div>
       </div>
     );
@@ -104,10 +106,10 @@ const Gallery: React.FC = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl font-bold text-white mb-4">
-            Mi Galería de Imágenes Virales
+            {t('gallery', 'my_gallery')}
           </h1>
           <p className="text-xl text-gray-300">
-            Todas tus creaciones generadas con IA
+            {t('gallery', 'all_creations')}
           </p>
         </motion.div>
 
@@ -121,16 +123,16 @@ const Gallery: React.FC = () => {
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-12 border border-white/20 max-w-md mx-auto">
               <Sparkles className="h-16 w-16 text-purple-400 mx-auto mb-6" />
               <h2 className="text-2xl font-bold text-white mb-4">
-                Tu galería está vacía
+                {t('gallery', 'empty_title')}
               </h2>
               <p className="text-gray-300 mb-6">
-                Aún no has generado ninguna imagen viral. ¡Empieza ahora!
+                {t('gallery', 'empty_desc')}
               </p>
               <a
                 href="/generate"
                 className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105"
               >
-                Generar mi primera imagen
+                {t('gallery', 'generate_first')}
               </a>
             </div>
           </motion.div>
@@ -191,7 +193,7 @@ const Gallery: React.FC = () => {
                       className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                     >
                       <Download className="h-4 w-4" />
-                      <span>Descargar</span>
+                      <span>{t('gallery', 'download')}</span>
                     </button>
                     <button
                       onClick={() => handleDelete(image.id)}

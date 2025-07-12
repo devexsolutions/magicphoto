@@ -3,19 +3,21 @@ import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Sparkles, User, LogOut, Settings, Home, Upload } from 'lucide-react';
 import { useAuthContext } from './AuthProvider';
 import { motion } from 'framer-motion';
+import { useLanguage } from './LanguageProvider';
 
 const Layout: React.FC = () => {
   const { user, profile, signOut, isAuthenticated, isAdmin } = useAuthContext();
   const location = useLocation();
+  const { lang, setLang, t } = useLanguage();
 
   const navigation = [
-    { name: 'Inicio', href: '/', icon: Home },
-    { name: 'Generar', href: '/generate', icon: Upload },
-    { name: 'Mis Imágenes', href: '/gallery', icon: User },
+    { name: t('nav', 'home'), href: '/', icon: Home },
+    { name: t('nav', 'generate'), href: '/generate', icon: Upload },
+    { name: t('nav', 'gallery'), href: '/gallery', icon: User },
   ];
 
   const adminNavigation = [
-    { name: 'Admin', href: '/admin', icon: Settings },
+    { name: t('nav', 'admin'), href: '/admin', icon: Settings },
   ];
 
   const isActive = (path: string) => location.pathname === path;
@@ -41,6 +43,12 @@ const Layout: React.FC = () => {
             </Link>
 
             <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+                className="px-3 py-2 text-gray-300 hover:text-white"
+              >
+                {lang === 'es' ? 'EN' : 'ES'}
+              </button>
               {isAuthenticated && (
                 <>
                   <div className="hidden md:flex items-center space-x-4">
@@ -82,14 +90,14 @@ const Layout: React.FC = () => {
 
                   <div className="flex items-center space-x-4">
                     <div className="text-sm text-gray-300">
-                      <span className="font-medium">{profile?.credits || 0}</span> créditos
+                      <span className="font-medium">{profile?.credits || 0}</span> {t('nav', 'credits')}
                     </div>
                     <button
                       onClick={handleSignOut}
                       className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-200"
                     >
                       <LogOut className="h-4 w-4" />
-                      <span>Salir</span>
+                      <span>{t('nav', 'logout')}</span>
                     </button>
                   </div>
                 </>
@@ -101,13 +109,13 @@ const Layout: React.FC = () => {
                     to="/login"
                     className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
                   >
-                    Iniciar Sesión
+                    {t('nav', 'login')}
                   </Link>
                   <Link
                     to="/register"
                     className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all duration-200"
                   >
-                    Registrarse
+                    {t('nav', 'register')}
                   </Link>
                 </div>
               )}
@@ -123,7 +131,7 @@ const Layout: React.FC = () => {
       <footer className="bg-black/20 backdrop-blur-md border-t border-purple-500/20 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center text-gray-400">
-            <p>&copy; 2024 ViralGenAI. Convierte tu imagen en una tendencia.</p>
+            <p>&copy; 2024 ViralGenAI. {t('footer', 'text')}</p>
           </div>
         </div>
       </footer>

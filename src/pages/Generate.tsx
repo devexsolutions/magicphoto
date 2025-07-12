@@ -6,6 +6,7 @@ import { Upload, Sparkles, Download, ArrowLeft, Loader2 } from 'lucide-react';
 import ReactCompareImage from 'react-compare-image';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
+import { useLanguage } from '../components/LanguageProvider';
 import toast from 'react-hot-toast';
 
 interface ViralTemplate {
@@ -21,6 +22,7 @@ const Generate: React.FC = () => {
   const [searchParams] = useSearchParams();
   const templateId = searchParams.get('template');
   const { profile } = useAuthContext();
+  const { t } = useLanguage();
   
   const [selectedTemplate, setSelectedTemplate] = useState<ViralTemplate | null>(null);
   const [templates, setTemplates] = useState<ViralTemplate[]>([]);
@@ -55,7 +57,7 @@ const Generate: React.FC = () => {
       setTemplates(data || []);
     } catch (error) {
       console.error('Error fetching templates:', error);
-      toast.error('Error al cargar las plantillas');
+      toast.error(t('generate', 'error_loading_templates'));
     }
   };
 
@@ -83,7 +85,7 @@ const Generate: React.FC = () => {
     if (!selectedTemplate || !uploadedImage || !profile) return;
 
     if (profile.credits < 1) {
-      toast.error('No tienes suficientes créditos para generar una imagen');
+      toast.error(t('generate', 'insufficient_credits'));
       return;
     }
 
@@ -119,10 +121,10 @@ const Generate: React.FC = () => {
         .update({ credits: profile.credits - 1 })
         .eq('id', profile.id);
 
-      toast.success('¡Imagen generada exitosamente!');
+      toast.success(t('generate', 'success'));
     } catch (error) {
       console.error('Error generating image:', error);
-      toast.error('Error al generar la imagen');
+      toast.error(t('generate', 'error_generating'));
       setStep('upload');
     } finally {
       setIsGenerating(false);
@@ -155,10 +157,10 @@ const Generate: React.FC = () => {
           className="text-center mb-12"
         >
           <h1 className="text-4xl font-bold text-white mb-4">
-            Generar Imagen Viral
+            {t('generate', 'title')}
           </h1>
           <p className="text-xl text-gray-300">
-            Sigue estos pasos para crear tu imagen viral
+            {t('generate', 'subtitle')}
           </p>
         </motion.div>
 
@@ -166,10 +168,10 @@ const Generate: React.FC = () => {
         <div className="flex justify-center mb-12">
           <div className="flex items-center space-x-4">
             {[
-              { key: 'template', label: '1. Plantilla', icon: Sparkles },
-              { key: 'upload', label: '2. Subir Imagen', icon: Upload },
-              { key: 'generate', label: '3. Generar', icon: Loader2 },
-              { key: 'result', label: '4. Resultado', icon: Download },
+              { key: 'template', label: t('generate', 'step_template'), icon: Sparkles },
+              { key: 'upload', label: t('generate', 'step_upload'), icon: Upload },
+              { key: 'generate', label: t('generate', 'step_generate'), icon: Loader2 },
+              { key: 'result', label: t('generate', 'step_result'), icon: Download },
             ].map((stepItem, index) => {
               const Icon = stepItem.icon;
               const isActive = step === stepItem.key;
@@ -210,7 +212,7 @@ const Generate: React.FC = () => {
             transition={{ duration: 0.5 }}
             className="space-y-6"
           >
-            <h2 className="text-2xl font-bold text-white mb-6">Selecciona una plantilla</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">{t('generate', 'select_template')}</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {templates.map((template) => (
                 <motion.div
@@ -268,18 +270,18 @@ const Generate: React.FC = () => {
             className="space-y-6"
           >
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-white">Sube tu imagen</h2>
+              <h2 className="text-2xl font-bold text-white">{t('generate', 'upload_image')}</h2>
               <button
                 onClick={() => setStep('template')}
                 className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>Cambiar plantilla</span>
+                <span>{t('generate', 'change_template')}</span>
               </button>
             </div>
 
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-              <h3 className="text-lg font-bold text-white mb-4">Plantilla seleccionada: {selectedTemplate.title}</h3>
+              <h3 className="text-lg font-bold text-white mb-4">{t('generate', 'selected_template')}: {selectedTemplate.title}</h3>
               <div className="aspect-video bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl overflow-hidden mb-4">
                 {selectedTemplate.reference_image_url ? (
                   <img
@@ -307,17 +309,17 @@ const Generate: React.FC = () => {
               <div className="text-center">
                 <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-lg text-white mb-2">
-                  {isDragActive ? 'Suelta la imagen aquí' : 'Arrastra una imagen o haz clic para seleccionar'}
+                  {isDragActive ? t('generate', 'drag_here') : t('generate', 'drag_prompt')}
                 </p>
                 <p className="text-gray-400">
-                  Formatos soportados: JPG, PNG, WEBP
+                  {t('generate', 'formats')}
                 </p>
               </div>
             </div>
 
             {uploadedImage && (
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                <h3 className="text-lg font-bold text-white mb-4">Imagen subida</h3>
+                <h3 className="text-lg font-bold text-white mb-4">{t('generate', 'image_uploaded')}</h3>
                 <div className="aspect-video bg-gray-800 rounded-xl overflow-hidden mb-4">
                   <img
                     src={uploadedImage}
@@ -330,7 +332,7 @@ const Generate: React.FC = () => {
                   disabled={!profile || profile.credits < 1}
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:cursor-not-allowed"
                 >
-                  {profile && profile.credits < 1 ? 'Sin créditos suficientes' : 'Generar Imagen Viral (1 crédito)'}
+                  {profile && profile.credits < 1 ? t('generate', 'no_credits') : t('generate', 'generate_button')}
                 </button>
               </div>
             )}
@@ -347,9 +349,9 @@ const Generate: React.FC = () => {
           >
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-12 border border-white/20">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-400 mx-auto mb-6"></div>
-              <h2 className="text-2xl font-bold text-white mb-4">Generando tu imagen viral...</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">{t('generate', 'generating')}</h2>
               <p className="text-gray-300">
-                Estamos aplicando la magia de la IA. Esto tomará unos segundos.
+                {t('generate', 'generating_desc')}
               </p>
             </div>
           </motion.div>
@@ -364,9 +366,9 @@ const Generate: React.FC = () => {
             className="space-y-6"
           >
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-white mb-4">¡Tu imagen viral está lista!</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">{t('generate', 'result_title')}</h2>
               <p className="text-gray-300">
-                Desliza para ver la comparación antes/después
+                {t('generate', 'result_desc')}
               </p>
             </div>
 
@@ -391,13 +393,13 @@ const Generate: React.FC = () => {
                   className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2"
                 >
                   <Download className="h-5 w-5" />
-                  <span>Descargar Imagen</span>
+                  <span>{t('generate', 'download')}</span>
                 </button>
                 <button
                   onClick={resetGeneration}
                   className="flex-1 bg-white/10 hover:bg-white/20 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 backdrop-blur-sm"
                 >
-                  Generar Otra
+                  {t('generate', 'generate_another')}
                 </button>
               </div>
             </div>
