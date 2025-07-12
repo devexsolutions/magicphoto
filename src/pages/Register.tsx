@@ -22,10 +22,10 @@ const Register: React.FC = () => {
 
     try {
       await signUp(email, password, fullName);
-      toast.success('¡Cuenta creada exitosamente! Ya puedes generar imágenes.');
+      toast.success(t('register', 'success'));
       navigate('/');
     } catch (error: any) {
-      toast.error(error.message || 'Error al crear la cuenta');
+      toast.error(error.message || t('register', 'error'));
     } finally {
       setLoading(false);
     }
@@ -128,26 +128,26 @@ const Register: React.FC = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
-              Al registrarte, aceptas nuestros{' '}
+              {t('register', 'terms_prefix')}{' '}
               <Link
                 to="/terms"
                 className="text-purple-400 hover:text-purple-300 transition-colors"
               >
-                términos de servicio
+                {t('register', 'terms')}
               </Link>
               {' '}y{' '}
               <Link
                 to="/privacy"
                 className="text-purple-400 hover:text-purple-300 transition-colors"
               >
-                política de privacidad
+                {t('register', 'privacy')}
               </Link>
             </p>
           </div>
 
           <div className="mt-6 p-4 bg-green-600/20 border border-green-600/30 rounded-xl">
             <p className="text-sm text-green-300 text-center">
-              🎉 ¡Obtén 3 créditos gratis para empezar a generar imágenes virales!
+              {t('register', 'free_credits')}
             </p>
           </div>
         </div>

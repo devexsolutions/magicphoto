@@ -21,10 +21,10 @@ const Login: React.FC = () => {
 
     try {
       await signIn(email, password);
-      toast.success('¡Bienvenido de vuelta!');
+      toast.success(t('login', 'success'));
       navigate('/');
     } catch (error: any) {
-      toast.error(error.message || 'Error al iniciar sesión');
+      toast.error(error.message || t('login', 'error'));
     } finally {
       setLoading(false);
     }
