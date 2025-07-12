@@ -92,6 +92,8 @@ const Admin: React.FC = () => {
     is_admin: false,
   });
 
+  const [referenceFile, setReferenceFile] = useState<File | null>(null);
+
   const { isAdmin } = useAuthContext();
 
   useEffect(() => {
@@ -268,7 +270,7 @@ const Admin: React.FC = () => {
 
   const handleTemplateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       const templateData = {
         title: templateForm.title,
@@ -401,6 +403,7 @@ const Admin: React.FC = () => {
       tags: '',
       is_active: true,
     });
+    setReferenceFile(null);
   };
 
   const resetUserForm = () => {
@@ -410,6 +413,20 @@ const Admin: React.FC = () => {
       credits: 0,
       is_admin: false,
     });
+  };
+
+  const handleReferenceFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setReferenceFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setTemplateForm(prev => ({ ...prev, reference_image_url: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setTemplateForm(prev => ({ ...prev, reference_image_url: '' }));
+    }
   };
 
   const handleEditTemplate = (template: ViralTemplate) => {
@@ -422,6 +439,7 @@ const Admin: React.FC = () => {
       tags: template.tags.join(', '),
       is_active: template.is_active,
     });
+    setReferenceFile(null);
     setShowTemplateModal(true);
   };
 
@@ -974,15 +992,21 @@ const Admin: React.FC = () => {
                   
                   <div>
                     <label className="block text-sm font-medium text-white mb-2">
-                      URL de imagen de referencia
+                      Imagen de referencia
                     </label>
                     <input
-                      type="url"
-                      value={templateForm.reference_image_url}
-                      onChange={(e) => setTemplateForm({ ...templateForm, reference_image_url: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      placeholder="https://example.com/image.jpg"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleReferenceFileChange}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
+                    {templateForm.reference_image_url && (
+                      <img
+                        src={templateForm.reference_image_url}
+                        alt="Preview"
+                        className="mt-2 h-32 w-full object-cover rounded-lg"
+                      />
+                    )}
                   </div>
                 </div>
                 
