@@ -16,8 +16,14 @@ export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const supabaseAvailable = !!supabase;
 
   useEffect(() => {
+    if (!supabaseAvailable) {
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -45,6 +51,8 @@ export const useAuth = () => {
   }, []);
 
   const fetchProfile = async (userId: string) => {
+    if (!supabaseAvailable) return;
+
     try {
       const { data, error } = await supabase
         .from('user_profiles')
@@ -62,6 +70,11 @@ export const useAuth = () => {
   };
 
   const signIn = async (email: string, password: string) => {
+    if (!supabaseAvailable) {
+      console.warn('Supabase no configurado - inicio de sesión simulado');
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -70,6 +83,11 @@ export const useAuth = () => {
   };
 
   const signUp = async (email: string, password: string, fullName: string) => {
+    if (!supabaseAvailable) {
+      console.warn('Supabase no configurado - registro simulado');
+      return;
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -89,6 +107,11 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
+    if (!supabaseAvailable) {
+      console.warn('Supabase no configurado - cierre de sesión simulado');
+      return;
+    }
+
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
