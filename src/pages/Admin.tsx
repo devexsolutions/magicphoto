@@ -41,6 +41,7 @@ interface AdminStats {
 }
 
 interface APIConfig {
+  id?: string;
   openai_key: string;
   stability_key: string;
   default_credits: number;
@@ -59,6 +60,7 @@ const Admin: React.FC = () => {
     activeUsers: 0
   });
   const [apiConfig, setApiConfig] = useState<APIConfig>({
+    id: 'settings',
     openai_key: '',
     stability_key: '',
     default_credits: 3,
@@ -125,14 +127,28 @@ const Admin: React.FC = () => {
 
   const fetchAPIConfig = async () => {
     try {
-      // Mock API config - in real implementation, this would come from database
-      setApiConfig({
-        openai_key: '••••••••••••••••',
-        stability_key: '••••••••••••••••',
-        default_credits: 3,
-        max_file_size: 10,
-        allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
-      });
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY || !supabase) {
+        setApiConfig({
+          id: 'settings',
+          openai_key: '',
+          stability_key: '',
+          default_credits: 3,
+          max_file_size: 10,
+          allowed_formats: ['jpg', 'jpeg', 'png', 'webp']
+        });
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('api_config')
+        .select('*')
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setApiConfig(data as APIConfig);
+      }
     } catch (error) {
       console.error('Error fetching API config:', error);
     }
@@ -356,7 +372,19 @@ const Admin: React.FC = () => {
 
   const handleSaveAPIConfig = async () => {
     try {
-      // Mock save API config
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY || !supabase) {
+        toast.success('Configuración guardada localmente');
+        return;
+      }
+
+      const { error } = await supabase.from('api_config').upsert({
+        id: apiConfig.id || 'settings',
+        ...apiConfig,
+        updated_at: new Date().toISOString(),
+      });
+
+      if (error) throw error;
+
       toast.success('Configuración guardada exitosamente');
     } catch (error) {
       console.error('Error saving API config:', error);
