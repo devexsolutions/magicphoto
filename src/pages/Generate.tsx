@@ -8,6 +8,7 @@ import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
 import { useLanguage } from '../components/LanguageProvider';
 import toast from 'react-hot-toast';
+import { createImageConversionService } from '../lib/imageApi';
 
 interface ViralTemplate {
   id: string;
@@ -93,17 +94,27 @@ const Generate: React.FC = () => {
     setStep('generate');
 
     try {
-      // Simulate API call to generate image
-      // In a real implementation, this would call your backend API
-      // which would then call OpenAI/Stability AI APIs
-      
-      // For demo purposes, we'll use a placeholder after a delay
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Mock generated image URL
-      const mockGeneratedImage = `https://picsum.photos/512/512?random=${Date.now()}`;
-      
-      setGeneratedImage(mockGeneratedImage);
+      const service = createImageConversionService();
+
+      const dataUrlToFile = (dataUrl: string, filename: string): File => {
+        const arr = dataUrl.split(',');
+        const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/png';
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+          u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
+      };
+
+      const file = dataUrlToFile(uploadedImage, 'input.png');
+      const generatedUrl = await service.convertImage({
+        image: file,
+        prompt: selectedTemplate.prompt,
+      });
+
+      setGeneratedImage(generatedUrl);
       setStep('result');
       
       // Save to database
@@ -111,7 +122,7 @@ const Generate: React.FC = () => {
         user_id: profile.id,
         template_id: selectedTemplate.id,
         original_image_url: uploadedImage,
-        generated_image_url: mockGeneratedImage,
+        generated_image_url: generatedUrl,
         status: 'completed',
       });
 
