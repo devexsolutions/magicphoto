@@ -2,34 +2,29 @@ export interface ImageConversionService {
   convertImage(options: { image: File; prompt: string }): Promise<string>;
 }
 
-export class OpenAIImageConversionService implements ImageConversionService {
-  private apiKey: string;
+export class BackendImageConversionService implements ImageConversionService {
+  private baseUrl: string;
 
-  constructor(apiKey: string) {
-    this.apiKey = apiKey;
+  constructor(baseUrl: string) {
+    this.baseUrl = baseUrl.replace(/\/$/, '');
   }
 
   async convertImage({ image, prompt }: { image: File; prompt: string }): Promise<string> {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('prompt', prompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
 
-    const response = await fetch('https://api.openai.com/v1/images/edits', {
+    const response = await fetch(`${this.baseUrl}/api/openai/edit`, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`,
-      },
       body: formData,
     });
 
     if (!response.ok) {
-      throw new Error('OpenAI image generation failed');
+      throw new Error('Image generation failed');
     }
 
     const data = await response.json();
-    return data.data?.[0]?.url as string;
+    return data.url as string;
   }
 }
 
@@ -37,11 +32,8 @@ export function createImageConversionService(): ImageConversionService {
   const provider = import.meta.env.VITE_IMAGE_API_PROVIDER || 'openai';
 
   if (provider === 'openai') {
-    const key = import.meta.env.VITE_OPENAI_KEY;
-    if (!key) {
-      throw new Error('Missing OpenAI API key');
-    }
-    return new OpenAIImageConversionService(key);
+    const url = import.meta.env.VITE_BACKEND_URL || '';
+    return new BackendImageConversionService(url);
   }
 
   throw new Error(`Unsupported provider: ${provider}`);
