@@ -281,24 +281,62 @@ const Admin: React.FC = () => {
         is_active: templateForm.is_active,
       };
 
+      const supabaseAvailable = !!(
+        import.meta.env.VITE_SUPABASE_URL &&
+        import.meta.env.VITE_SUPABASE_ANON_KEY &&
+        supabase
+      );
+
       if (editingTemplate) {
-        // Mock update
-        setTemplates(templates.map(t => 
-          t.id === editingTemplate.id 
-            ? { ...t, ...templateData, updated_at: new Date().toISOString() }
-            : t
-        ));
+        if (supabaseAvailable) {
+          const { data, error } = await supabase
+            .from('viral_templates')
+            .update({ ...templateData, updated_at: new Date().toISOString() })
+            .eq('id', editingTemplate.id)
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          setTemplates(templates.map(t =>
+            t.id === editingTemplate.id && data ? { ...t, ...data } : t
+          ));
+        } else {
+          // Mock update
+          setTemplates(templates.map(t =>
+            t.id === editingTemplate.id
+              ? { ...t, ...templateData, updated_at: new Date().toISOString() }
+              : t
+          ));
+        }
         toast.success('Plantilla actualizada exitosamente');
       } else {
-        // Mock create
-        const newTemplate = {
-          id: Date.now().toString(),
-          ...templateData,
-          usage_count: 0,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        setTemplates([newTemplate, ...templates]);
+        if (supabaseAvailable) {
+          const { data, error } = await supabase
+            .from('viral_templates')
+            .insert({
+              ...templateData,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .select()
+            .single();
+
+          if (error) throw error;
+
+          if (data) {
+            setTemplates([data as any, ...templates]);
+          }
+        } else {
+          const newTemplate = {
+            id: Date.now().toString(),
+            ...templateData,
+            usage_count: 0,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          setTemplates([newTemplate, ...templates]);
+        }
         toast.success('Plantilla creada exitosamente');
       }
 
