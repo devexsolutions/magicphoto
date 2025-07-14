@@ -32,7 +32,9 @@ export function createImageConversionService(): ImageConversionService {
   const provider = import.meta.env.VITE_IMAGE_API_PROVIDER || 'openai';
 
   if (provider === 'openai') {
-    const url = import.meta.env.VITE_BACKEND_URL || '';
+    // Base URL for the backend API. Defaults to the current origin when the
+    // environment variable is not defined.
+    const url = import.meta.env.VITE_BACKEND_URL || window.location.origin;
     return new BackendImageConversionService(url);
   }
 
