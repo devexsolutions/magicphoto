@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Trash2, Calendar, Sparkles } from 'lucide-react';
-import ReactCompareImage from 'react-compare-image';
+import ReactCompareImageModule from 'react-compare-image';
+const ReactCompareImage =
+  // Some bundlers require .default when using CommonJS modules
+  (ReactCompareImageModule as any).default || ReactCompareImageModule;
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
 import toast from 'react-hot-toast';
