@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
-import { Upload, Sparkles, Download, ArrowLeft, Loader2 } from 'lucide-react';
+import { Upload, Sparkles, Download, ArrowLeft, Loader2, X } from 'lucide-react';
 import ReactCompareImage from 'react-compare-image';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
@@ -31,6 +31,7 @@ const Generate: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [step, setStep] = useState<'template' | 'upload' | 'generate' | 'result'>('template');
+  const [previewTemplate, setPreviewTemplate] = useState<ViralTemplate | null>(null);
 
   useEffect(() => {
     fetchTemplates();
@@ -235,8 +236,7 @@ const Generate: React.FC = () => {
                       : 'border-white/20 hover:border-white/40'
                   }`}
                   onClick={() => {
-                    setSelectedTemplate(template);
-                    setStep('upload');
+                    setPreviewTemplate(template);
                   }}
                 >
                   <div className="aspect-video bg-gradient-to-br from-purple-600 to-pink-600 relative overflow-hidden">
@@ -417,6 +417,59 @@ const Generate: React.FC = () => {
           </motion.div>
         )}
       </div>
+
+      {previewTemplate && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur"
+          onClick={() => setPreviewTemplate(null)}
+        >
+          <div
+            className="max-w-xl w-full p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6">
+              <h2 className="text-xl font-bold text-white mb-4">
+                {t('generate', 'preview')}
+              </h2>
+              <button
+                className="absolute top-2 right-2 text-white"
+                onClick={() => setPreviewTemplate(null)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+              <div className="mb-4">
+                {previewTemplate.reference_image_url ? (
+                  <img
+                    src={previewTemplate.reference_image_url}
+                    alt={previewTemplate.title}
+                    className="w-full h-auto object-contain rounded-xl"
+                  />
+                ) : (
+                  <div className="w-full h-60 flex items-center justify-center">
+                    <Sparkles className="h-12 w-12 text-white" />
+                  </div>
+                )}
+              </div>
+              <h3 className="text-lg font-bold text-white mb-2">
+                {previewTemplate.title}
+              </h3>
+              <p className="text-gray-300 mb-4">
+                {previewTemplate.description}
+              </p>
+              <button
+                onClick={() => {
+                  setSelectedTemplate(previewTemplate);
+                  setStep('upload');
+                  setPreviewTemplate(null);
+                }}
+                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300"
+              >
+                {t('generate', 'use_template')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
