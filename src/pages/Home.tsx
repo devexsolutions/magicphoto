@@ -133,12 +133,12 @@ const Home: React.FC = () => {
                   {t('home', 'start_free')}
                 </Link>
               )}
-              <Link
-                to="#templates"
+              <a
+                href="#templates"
                 className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-semibold rounded-xl transition-all duration-300 backdrop-blur-sm"
               >
                 {t('home', 'view_templates')}
-              </Link>
+              </a>
             </div>
           </motion.div>
         </div>
