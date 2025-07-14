@@ -6,7 +6,8 @@ export class BackendImageConversionService implements ImageConversionService {
   private baseUrl: string;
 
   constructor(baseUrl: string) {
-    this.baseUrl = import.meta.env.VITE_IMAGE_API_PROVIDER;   // baseUrl.replace(/\/$/, '');
+    // Normalize the base URL and store it for later requests
+    this.baseUrl = baseUrl.replace(/\/$/, '');
   }
 
   async convertImage({ image, prompt }: { image: File; prompt: string }): Promise<string> {
@@ -14,7 +15,7 @@ export class BackendImageConversionService implements ImageConversionService {
     formData.append('image', image);
     formData.append('prompt', prompt);
 
-    const response = await fetch(`${this.baseUrl}`, {
+    const response = await fetch(`${this.baseUrl}/api/openai/edit`, {
       method: 'POST',
       body: formData,
     });
