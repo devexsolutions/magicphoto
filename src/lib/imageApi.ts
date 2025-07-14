@@ -14,7 +14,7 @@ export class BackendImageConversionService implements ImageConversionService {
     formData.append('image', image);
     formData.append('prompt', prompt);
 
-    const response = await fetch(`${this.baseUrl}/api/openai/edit`, {
+    const response = await fetch(`${this.baseUrl}`, {
       method: 'POST',
       body: formData,
     });
