@@ -6,7 +6,7 @@ export class BackendImageConversionService implements ImageConversionService {
   private baseUrl: string;
 
   constructor(baseUrl: string) {
-    this.baseUrl = baseUrl.replace(/\/$/, '');
+    this.baseUrl = import.meta.env.VITE_IMAGE_API_PROVIDER; // baseUrl.replace(/\/$/, '');
   }
 
   async convertImage({ image, prompt }: { image: File; prompt: string }): Promise<string> {
