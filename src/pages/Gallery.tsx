@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Download, Trash2, Calendar, Sparkles } from 'lucide-react';
-import ReactCompareImage from 'react-compare-image';
+import {
+  Download,
+  Trash2,
+  Calendar,
+  Sparkles,
+  Facebook,
+  Instagram,
+  Twitter
+} from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
 import toast from 'react-hot-toast';
@@ -85,6 +92,23 @@ const Gallery: React.FC = () => {
     }
   };
 
+  const handleShare = (platform: 'facebook' | 'instagram' | 'x', imageUrl: string) => {
+    const url = encodeURIComponent(imageUrl);
+    let shareUrl = '';
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+        break;
+      case 'instagram':
+        shareUrl = `https://www.instagram.com/sharing?url=${url}`;
+        break;
+      case 'x':
+        shareUrl = `https://twitter.com/intent/tweet?url=${url}`;
+        break;
+    }
+    window.open(shareUrl, '_blank');
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -146,25 +170,17 @@ const Gallery: React.FC = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="bg-white/10 backdrop-blur-sm rounded-2xl overflow-hidden border border-white/20 hover:border-white/40 transition-all duration-300"
               >
-                <div className="aspect-video overflow-hidden">
+                <div className="aspect-video overflow-hidden bg-gray-800 flex items-center justify-center">
                   {image.status === 'completed' && image.generated_image_url ? (
-                    <ReactCompareImage
-                      leftImage={image.original_image_url}
-                      rightImage={image.generated_image_url}
-                      sliderLineColor="#8B5CF6"
-                      sliderLineWidth={2}
-                      handle={
-                        <div className="w-6 h-6 bg-purple-600 rounded-full border-2 border-white flex items-center justify-center">
-                          <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                        </div>
-                      }
+                    <img
+                      src={image.generated_image_url}
+                      alt={image.viral_templates?.title || 'Imagen generada'}
+                      className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-800">
-                      <div className="text-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400 mx-auto mb-2"></div>
-                        <p className="text-gray-400 text-sm">Generando...</p>
-                      </div>
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400 mx-auto mb-2"></div>
+                      <p className="text-gray-400 text-sm">Generando...</p>
                     </div>
                   )}
                 </div>
@@ -186,7 +202,7 @@ const Gallery: React.FC = () => {
                     {image.viral_templates?.description || 'Descripción no disponible'}
                   </p>
 
-                  <div className="flex space-x-2">
+                  <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => handleDownload(image.generated_image_url, image.viral_templates?.title || 'imagen')}
                       disabled={image.status !== 'completed'}
@@ -194,6 +210,27 @@ const Gallery: React.FC = () => {
                     >
                       <Download className="h-4 w-4" />
                       <span>{t('gallery', 'download')}</span>
+                    </button>
+                    <button
+                      onClick={() => handleShare('facebook', image.generated_image_url)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 flex items-center justify-center"
+                      title={t('gallery', 'share_facebook')}
+                    >
+                      <Facebook className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleShare('instagram', image.generated_image_url)}
+                      className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 flex items-center justify-center"
+                      title={t('gallery', 'share_instagram')}
+                    >
+                      <Instagram className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleShare('x', image.generated_image_url)}
+                      className="bg-black hover:bg-gray-800 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 flex items-center justify-center"
+                      title={t('gallery', 'share_x')}
+                    >
+                      <Twitter className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(image.id)}

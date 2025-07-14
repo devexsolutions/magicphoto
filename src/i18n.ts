@@ -65,6 +65,9 @@ export const translations = {
       empty_desc: 'Aún no has generado ninguna imagen viral. ¡Empieza ahora!',
       generate_first: 'Generar mi primera imagen',
       download: 'Descargar',
+      share_facebook: 'Compartir en Facebook',
+      share_instagram: 'Compartir en Instagram',
+      share_x: 'Compartir en X',
       delete_confirm: '¿Estás seguro de que quieres eliminar esta imagen?'
     },
     generate: {
@@ -160,6 +163,9 @@ export const translations = {
       empty_desc: "You haven't generated any viral images yet. Start now!",
       generate_first: 'Generate my first image',
       download: 'Download',
+      share_facebook: 'Share on Facebook',
+      share_instagram: 'Share on Instagram',
+      share_x: 'Share on X',
       delete_confirm: 'Are you sure you want to delete this image?'
     },
     generate: {
