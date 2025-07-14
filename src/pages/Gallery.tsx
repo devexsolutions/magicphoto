@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Trash2, Calendar, Sparkles } from 'lucide-react';
-import ReactCompareImage from 'react-compare-image';
+import ReactCompareImageImport from 'react-compare-image';
+
+// Some bundlers return the component under a `default` property when importing
+// CommonJS modules. Normalise the import so we always get the actual React
+// component regardless of module system.
+const ReactCompareImage =
+  (ReactCompareImageImport as any).default || ReactCompareImageImport;
 import { supabase } from '../lib/supabase';
 import { useAuthContext } from '../components/AuthProvider';
 import toast from 'react-hot-toast';
@@ -166,7 +172,7 @@ const Gallery: React.FC = () => {
                         <p className="text-gray-400 text-sm">Generando...</p>
                       </div>
                     </div>
-                  )}
+                  )
                 </div>
 
                 <div className="p-6">
