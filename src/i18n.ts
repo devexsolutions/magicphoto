@@ -93,7 +93,10 @@ export const translations = {
       error_loading_templates: 'Error al cargar las plantillas',
       insufficient_credits: 'No tienes suficientes créditos para generar una imagen',
       success: '¡Imagen generada exitosamente!',
-      error_generating: 'Error al generar la imagen'
+      error_generating: 'Error al generar la imagen',
+      preview: 'Vista previa',
+      use_template: 'Usar plantilla',
+      close: 'Cerrar'
     }
   },
   en: {
@@ -188,7 +191,10 @@ export const translations = {
       error_loading_templates: 'Error loading templates',
       insufficient_credits: 'You do not have enough credits to generate an image',
       success: 'Image generated successfully!',
-      error_generating: 'Error generating image'
+      error_generating: 'Error generating image',
+      preview: 'Preview',
+      use_template: 'Use template',
+      close: 'Close'
     }
   }
 } as const;
