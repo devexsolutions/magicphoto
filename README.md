@@ -20,3 +20,13 @@ Start the backend using:
 npm run server
 ```
 
+
+## Netlify deployment
+
+When deployed on Netlify, the image generation API is handled by a serverless function defined in `netlify/functions/edit.js`. Redirect rules in `netlify.toml` map both `/api/openai/edit` and `/generate/api/openai/edit` to this function, preventing 404 errors when the site is served from a sub-path.
+
+Local development can still use the Express server with:
+
+```bash
+npm run server
+```

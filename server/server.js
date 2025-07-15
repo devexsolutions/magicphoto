@@ -17,7 +17,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/api/openai/edit', upload.single('image'), async (req, res) => {
+// Support both /api/openai/edit and /generate/api/openai/edit in case the
+// frontend is hosted under a sub-path (e.g. /generate). This prevents 404
+// errors when the API is called with the sub-path prefix.
+const editPaths = ['/api/openai/edit', '/generate/api/openai/edit'];
+app.post(editPaths, upload.single('image'), async (req, res) => {
   const prompt = req.body.prompt;
   const file = req.file;
 
