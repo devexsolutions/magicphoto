@@ -33,9 +33,15 @@ export function createImageConversionService(): ImageConversionService {
   const provider = import.meta.env.VITE_IMAGE_API_PROVIDER || 'openai';
 
   if (provider === 'openai') {
-    // Base URL for the backend API. Defaults to the current origin when the
-    // environment variable is not defined.
-    const url = import.meta.env.VITE_BACKEND_URL || window.location.origin;
+    // Base URL for the backend API. If not provided, fall back to the local
+    // development server when running on the Vite dev port (5173). This avoids
+    // 404 errors when the frontend and backend run on different ports.
+    const defaultUrl =
+      window.location.port === '5173'
+        ? `${window.location.protocol}//${window.location.hostname}:3001`
+        : window.location.origin;
+
+    const url = import.meta.env.VITE_BACKEND_URL || defaultUrl;
     return new BackendImageConversionService(url);
   }
 
