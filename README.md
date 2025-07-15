@@ -2,6 +2,10 @@
 
 This project allows you to upload a photo and transform it with generative AI templates.
 
+Uploaded images are first analyzed with the GPT-4 Vision model to obtain a
+textual description. That description is appended to the selected template's
+prompt before the final image generation request is sent to OpenAI.
+
 ## Environment variables
 
 The application expects the following variables to be defined at build time:
@@ -12,7 +16,9 @@ The application expects the following variables to be defined at build time:
 
 The backend server requires an additional environment variable:
 
-- `OPENAI_API_KEY` used to call the OpenAI image API.
+- `OPENAI_API_KEY` used to call the OpenAI APIs. This key is used both for the
+  image generation request and to generate a description of the uploaded image
+  using the GPT-4 Vision model.
 
 Start the backend using:
 
