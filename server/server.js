@@ -7,6 +7,44 @@ dotenv.config();
 const app = express();
 const upload = multer();
 
+async function describeImage(buffer, mimetype) {
+  const base64 = buffer.toString('base64');
+  const payload = {
+    model: 'gpt-4-vision-preview',
+    messages: [
+      {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'Describe the image in detail.' },
+          {
+            type: 'image_url',
+            image_url: { url: `data:${mimetype};base64,${base64}` },
+          },
+        ],
+      },
+    ],
+    max_tokens: 200,
+  };
+
+  const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!resp.ok) {
+    const text = await resp.text();
+    throw new Error(`Vision request failed: ${text}`);
+  }
+
+  const data = await resp.json();
+  const description = data.choices?.[0]?.message?.content?.trim();
+  return description || '';
+}
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -30,18 +68,25 @@ app.post(editPaths, upload.single('image'), async (req, res) => {
   }
 
   try {
-    const formData = new FormData();
-    formData.append('image', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
-    formData.append('prompt', prompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
+    // First generate a description of the uploaded image using GPT-4 Vision
+    const description = await describeImage(file.buffer, file.mimetype);
 
-    const response = await fetch('https://api.openai.com/v1/images/edits', {
+    const combinedPrompt = `${prompt}\n\n${description}`;
+
+    const payload = {
+      model: 'dall-e-3',
+      prompt: combinedPrompt,
+      n: 1,
+      size: '1024x1024',
+    };
+
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
-      body: formData,
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
