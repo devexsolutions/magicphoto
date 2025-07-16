@@ -2,10 +2,6 @@
 
 This project allows you to upload a photo and transform it with generative AI templates.
 
-Uploaded images are analyzed with GPT-4 Vision to generate a textual
-description. This description is appended to the selected template, and the
-resulting prompt is sent to the DALL·E 3 `images/generations` endpoint to produce
-a new image.
 
 ## Environment variables
 
@@ -18,8 +14,6 @@ The application expects the following variables to be defined at build time:
 The backend server requires an additional environment variable:
 
 - `OPENAI_API_KEY` used to call the OpenAI APIs. This key is used both for the
-  DALL·E 3 image generation request and to generate a description of the uploaded
-  image using the GPT-4 Vision model.
 
 Start the backend using:
 
