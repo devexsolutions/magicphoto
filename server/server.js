@@ -73,18 +73,14 @@ app.post(editPaths, upload.single('image'), async (req, res) => {
 
     const combinedPrompt = `${prompt}\n\n${description}`;
 
-    const formData = new FormData();
-    formData.append('image', new Blob([file.buffer], { type: file.mimetype }), file.originalname);
-    formData.append('prompt', combinedPrompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
 
-    const response = await fetch('https://api.openai.com/v1/images/edits', {
+    const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
-      body: formData,
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {

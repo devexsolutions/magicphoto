@@ -98,18 +98,7 @@ export async function handler(event) {
     const description = await describeImage(imageField.data, imageField.contentType, apiKey);
     const combinedPrompt = `${prompt}\n\n${description}`;
 
-    const formData = new FormData();
-    formData.append('image', new Blob([imageField.data], { type: imageField.contentType }), imageField.filename);
-    formData.append('prompt', combinedPrompt);
-    formData.append('n', '1');
-    formData.append('size', '1024x1024');
 
-    const response = await fetch('https://api.openai.com/v1/images/edits', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: formData,
     });
 
     const text = await response.text();
