@@ -2,10 +2,10 @@
 
 This project allows you to upload a photo and transform it with generative AI templates.
 
-Uploaded images are first analyzed with the GPT-4 Vision model to obtain a
-textual description. That description is appended to the selected template's
-prompt before the final image generation request is sent to the DALL·E 3
-`images/generations` endpoint.
+Uploaded images are analyzed with GPT-4 Vision to generate a textual
+description. This description is appended to the selected template, and the
+resulting prompt is sent to the DALL·E 3 `images/generations` endpoint to produce
+a new image.
 
 ## Environment variables
 
