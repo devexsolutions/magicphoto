@@ -73,6 +73,12 @@ app.post(editPaths, upload.single('image'), async (req, res) => {
 
     const combinedPrompt = `${prompt}\n\n${description}`;
 
+    const payload = {
+      model: 'dall-e-3',
+      prompt: combinedPrompt,
+      n: 1,
+      size: '1024x1024',
+    };
 
     const response = await fetch('https://api.openai.com/v1/images/generations', {
       method: 'POST',
